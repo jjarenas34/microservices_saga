@@ -10,22 +10,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import reactor.core.publisher.DirectProcessor;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.FluxSink;
-
 import java.util.function.Consumer;
-import java.util.function.Supplier;
+
 
 @Configuration
-public class OrderServiceConfig {
+public class OrderConsumerConfig {
     //los servicios que consumo
     @Autowired
     private PaymentEventConsumerService consumerService;
 
     @Autowired
     private ShippingEventConsumerService shippingConsumerService;
-
+/*
     //los eventos que se van a publicar
     @Bean
     public DirectProcessor<OrderEvent> getFlux(){
@@ -58,15 +54,19 @@ public class OrderServiceConfig {
     public Supplier<Flux<ShppingAfterPaymentEvent>> shippingEventPublisher(DirectProcessor<ShppingAfterPaymentEvent> processor){
         return () -> processor;
     }
+
+ */
 //consumo los canales
     @Bean
     public Consumer<PaymentEvent> paymentEventConsumer(){
-        return consumerService::consumePaymentEvent;
+        return (payment) -> consumerService.consumePaymentEvent(payment);
+        //return consumerService::consumePaymentEvent;
     }
 
 
     @Bean
     public Consumer<ShippingEvent> shippingEventConsumer(){
-        return shippingConsumerService::consumeShippingEvent;
+        return (shipping) -> shippingConsumerService.consumeShippingEvent(shipping);
+        //return shippingConsumerService::consumeShippingEvent;
     }
 }
